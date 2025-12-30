@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Categories - Admin{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Manage Categories</h2>
+                <div>
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary me-2">Back to Dashboard</a>
+                    <a href="{{ url_for('admin_create_category') }}" class="btn btn-primary">Create New Category</a>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    {% if categories %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Created By</th>
+                                        <th>Posts Count</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for category in categories %}
+                                    <tr>
+                                        <td><strong>{{ category.name }}</strong></td>
+                                        <td>{{ category.description or 'No description' }}</td>
+                                        <td>{{ category.creator.username }}</td>
+                                        <td><span class="badge bg-info">{{ category.posts.count() }}</span></td>
+                                        <td>
+                                            {% if category.is_active %}
+                                                <span class="badge bg-success">Active</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Inactive</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('admin_toggle_category', category_id=category.id) }}" 
+                                               class="btn btn-sm {{ 'btn-outline-danger' if category.is_active else 'btn-outline-success' }}">
+                                                {{ 'Deactivate' if category.is_active else 'Activate' }}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i data-feather="folder-plus" class="empty-icon"></i>
+                            <h4 class="mt-3">No categories yet</h4>
+                            <p class="text-muted">Create your first category to organize posts.</p>
+                            <a href="{{ url_for('admin_create_category') }}" class="btn btn-primary">Create Category</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
