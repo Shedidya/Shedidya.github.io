@@ -1,37 +1,104 @@
 {% extends "base.html" %}
 
-{% block title %}Create Category - Admin{% endblock %}
+{% block title %}Post Rankings - Admin{% endblock %}
 
 {% block content %}
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Post Rankings</h2>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+            </div>
+            
             <div class="card">
                 <div class="card-header">
-                    <h4 class="mb-0">Create New Category</h4>
+                    <h5 class="mb-0">All Posts Ranked by Likes</h5>
+                    <small class="text-muted">Competition leaderboard - like counts are hidden from regular users</small>
                 </div>
                 <div class="card-body">
-                    <form method="post">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Category Name *</label>
-                            <input type="text" class="form-control" id="name" name="name" required 
-                                   placeholder="e.g., School Event, Science Fair">
+                    {% if posts_with_likes %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Post</th>
+                                        <th>Author</th>
+                                        <th>Category</th>
+                                        <th>Likes</th>
+                                        <th>Comments</th>
+                                        <th>Date Posted</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for post, like_count in posts_with_likes %}
+                                    <tr class="{{ 'table-warning' if loop.index <= 3 else '' }}">
+                                        <td>
+                                            <strong>{{ loop.index }}</strong>
+                                            {% if loop.index == 1 %}
+                                                <i data-feather="award" class="text-warning ms-1"></i>
+                                            {% elif loop.index == 2 %}
+                                                <i data-feather="award" class="text-secondary ms-1"></i>
+                                            {% elif loop.index == 3 %}
+                                                <i data-feather="award" class="text-primary ms-1"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="{{ url_for('uploaded_file', filename=post.image_filename) }}" 
+                                                     class="img-thumbnail me-2" style="width: 60px; height: 60px; object-fit: cover;">
+                                                <div>
+                                                    <div class="fw-bold">{{ post.caption[:50] }}{% if post.caption|length > 50 %}...{% endif %}</div>
+                                                    {% if post.hashtags %}
+                                                        <small class="text-primary">{{ post.hashtags[:30] }}...</small>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('profile', username=post.author.username) }}" class="text-decoration-none">
+                                                {{ post.author.username }}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span class="badge category-badge category-{{ post.get_category_name().lower() }}">
+                                                {{ post.get_category_name() }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-danger fs-6">{{ like_count }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-secondary">{{ post.comment_count() }}</span>
+                                        </td>
+                                        <td>{{ post.created_at.strftime('%m/%d/%Y') }}</td>
+                                        <td>
+                                            <a href="{{ url_for('view_post', post_id=post.id) }}" 
+                                               class="btn btn-sm btn-outline-primary">View</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
-                        
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3"
-                                      placeholder="Optional description for this category"></textarea>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i data-feather="bar-chart" class="empty-icon"></i>
+                            <h4 class="mt-3">No posts to rank yet</h4>
+                            <p class="text-muted">Posts will appear here once users start sharing photos.</p>
                         </div>
-                        
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{{ url_for('admin_categories') }}" class="btn btn-outline-secondary me-md-2">Cancel</a>
-                            <button type="submit" class="btn btn-primary">Create Category</button>
-                        </div>
-                    </form>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.table-warning {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+}
+</style>
 {% endblock %}
