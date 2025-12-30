@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile - HMAgram{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="auth-card">
+                <div class="text-center mb-4">
+                    <h2 class="h4">Edit Profile</h2>
+                    <p class="text-muted">Update your account information</p>
+                </div>
+                
+                <form method="post" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    
+                    <!-- Current Profile Picture -->
+                    {% if current_user.profile_image %}
+                        <div class="text-center mb-3">
+                            <div class="current-profile-pic">
+                                <img src="{{ url_for('uploaded_file', filename=current_user.profile_image) }}" alt="Current profile picture" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
+                            </div>
+                            <small class="text-muted">Current profile picture</small>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        {{ form.username.label(class="form-label") }}
+                        {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else "")) }}
+                        {% if form.username.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.username.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.email.label(class="form-label") }}
+                        {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+                        {% if form.email.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.bio.label(class="form-label") }}
+                        {{ form.bio(class="form-control" + (" is-invalid" if form.bio.errors else ""), rows="3") }}
+                        {% if form.bio.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.bio.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.profile_image.label(class="form-label") }}
+                        {{ form.profile_image(class="form-control" + (" is-invalid" if form.profile_image.errors else "")) }}
+                        {% if form.profile_image.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.profile_image.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Upload a square image for best results (JPG, PNG only).</div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-primary") }}
+                        <a href="{{ url_for('profile', username=current_user.username) }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
