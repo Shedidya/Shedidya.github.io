@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Photo - HMAgram{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="upload-card">
+                <div class="text-center mb-4">
+                    <h2 class="h4">Share a Photo</h2>
+                    <p class="text-muted">Upload and categorize your school moments</p>
+                </div>
+                
+                <form method="post" enctype="multipart/form-data" id="uploadForm">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-4">
+                        <label class="form-label">{{ form.image.label.text }}</label>
+                        <div class="upload-area" id="uploadArea">
+                            <div class="upload-content">
+                                <i data-feather="camera" class="upload-icon"></i>
+                                <p class="mb-2"><strong>Click to select a photo</strong></p>
+                                <p class="text-muted small">or drag and drop</p>
+                                <p class="text-muted small">JPG, PNG, GIF up to 16MB</p>
+                            </div>
+                            {{ form.image(class="upload-input", id="imageInput") }}
+                        </div>
+                        <div class="image-preview mt-3" id="imagePreview" style="display: none;">
+                            <img id="previewImg" class="preview-image" alt="Preview">
+                        </div>
+                        {% if form.image.errors %}
+                            <div class="text-danger mt-2">
+                                {% for error in form.image.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    
+                    <div class="mb-3">
+                        {{ form.caption.label(class="form-label") }}
+                        {{ form.caption(class="form-control" + (" is-invalid" if form.caption.errors else ""), rows="3") }}
+                        {% if form.caption.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.caption.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        {{ form.hashtags.label(class="form-label") }}
+                        {{ form.hashtags(class="form-control" + (" is-invalid" if form.hashtags.errors else "")) }}
+                        <small class="form-text text-muted">Separate hashtags with spaces (e.g., #school #friends #fun)</small>
+                        {% if form.hashtags.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.hashtags.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-primary", id="submitBtn") }}
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
