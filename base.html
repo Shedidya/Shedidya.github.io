@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HMAgram - {% block title %}School Photo Sharing{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Main Content -->
+    <div class="main-content">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="container mt-3">
+                    {% for message in messages %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </div>
+    
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="nav-item {{ 'active' if request.endpoint == 'index' }}">
+                <i data-feather="home"></i>
+                <span>Home</span>
+            </a>
+            <a href="{{ url_for('search') }}" class="nav-item {{ 'active' if request.endpoint == 'search' }}">
+                <i data-feather="search"></i>
+                <span>Search</span>
+            </a>
+            <a href="{{ url_for('upload_post') }}" class="nav-item {{ 'active' if request.endpoint == 'upload_post' }}">
+                <i data-feather="plus-square"></i>
+                <span>Upload</span>
+            </a>
+            {% if current_user.is_authenticated %}
+                {% if current_user.is_admin %}
+                    <a href="{{ url_for('admin_dashboard') }}" class="nav-item {{ 'active' if request.endpoint.startswith('admin') }}">
+                        <i data-feather="settings"></i>
+                        <span>Admin</span>
+                    </a>
+                {% endif %}
+                <a href="{{ url_for('profile', username=current_user.username) }}" class="nav-item {{ 'active' if request.endpoint == 'profile' and request.view_args.get('username') == current_user.username }}">
+                    <i data-feather="user"></i>
+                    <span>Profile</span>
+                </a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="nav-item {{ 'active' if request.endpoint == 'login' }}">
+                    <i data-feather="log-in"></i>
+                    <span>Login</span>
+                </a>
+            {% endif %}
+        </div>
+    </nav>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Initialize Feather icons
+        feather.replace();
+    </script>
+</body>
+</html>
+
